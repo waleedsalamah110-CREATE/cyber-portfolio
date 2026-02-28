@@ -1,0 +1,28 @@
+<!-- Wazuh custom rules: Persistence (scheduled tasks, services, registry) -->
+<group name="soc_lab,persistence,">
+  <!-- Scheduled task created -->
+  <rule id="100030" level="8">
+    <if_sid>61608</if_sid>
+    <description>Windows: Scheduled task created - possible persistence</description>
+    <group>persistence,task,</group>
+  </rule>
+  <!-- Suspicious task path (temp, appdata) -->
+  <rule id="100031" level="10">
+    <if_sid>100030</if_sid>
+    <match>temp|AppData\\Local\\Temp|\\Users\\.*\\AppData</match>
+    <description>Windows: Scheduled task from temp/AppData - high confidence persistence</description>
+    <group>persistence,task,</group>
+  </rule>
+  <!-- New service installed -->
+  <rule id="100032" level="8">
+    <if_sid>61607</if_sid>
+    <description>Windows: Service installed (7045) - possible persistence</description>
+    <group>persistence,service,</group>
+  </rule>
+  <!-- Registry Run key (if Wazuh collects registry events or Sysmon 13) -->
+  <rule id="100033" level="10">
+    <match>CurrentVersion\\Run|RunOnce|RunServices</match>
+    <description>Windows: Run/RunOnce registry - possible persistence</description>
+    <group>persistence,registry,</group>
+  </rule>
+</group>

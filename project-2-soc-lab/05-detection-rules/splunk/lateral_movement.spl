@@ -1,0 +1,23 @@
+|================================================================================|
+| Splunk: Lateral movement – PsExec / WMI / remote execution                    |
+| Data: Windows Security 4688 (process creation). Adjust index/sourcetype       |
+|================================================================================|
+
+index=windows EventCode=4688
+| search CommandLine=*psexec* OR CommandLine=*wmiexec* OR CommandLine=*smbexec* OR CommandLine=*paexec*
+| table _time Computer User NewProcessName CommandLine ParentProcessName
+
+|================================================================================|
+| WmiPrvSE spawning cmd or powershell                                            |
+|================================================================================|
+
+index=windows EventCode=4688
+| search ParentProcessName=*WmiPrvSE* (NewProcessName=cmd.exe OR NewProcessName=powershell.exe)
+| table _time Computer User NewProcessName CommandLine ParentProcessName
+
+|================================================================================|
+| Service creation (7045) – possible PsExec / lateral movement                  |
+|================================================================================|
+
+index=windows EventCode=7045
+| table _time Computer ServiceName ServiceFileName

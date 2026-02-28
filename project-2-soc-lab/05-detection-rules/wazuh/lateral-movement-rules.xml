@@ -1,0 +1,26 @@
+<!-- Wazuh custom rules: Lateral movement (PsExec, WMI, services) -->
+<group name="soc_lab,lateral_movement,">
+  <!-- PsExec / remote service execution -->
+  <rule id="100010" level="12">
+    <if_sid>61603</if_sid>
+    <match>psexec|paexec|PsExec|wmiexec|smbexec</match>
+    <description>Windows: Possible lateral movement - PsExec/WMI/SMB exec</description>
+    <group>lateral_movement,process,</group>
+  </rule>
+  <!-- Service creation (e.g. PsExec drops a service) -->
+  <rule id="100011" level="10">
+    <if_sid>61607</if_sid>
+    <match>services.exe|svchost</match>
+    <field name="win.eventdata.image">\b(cmd|powershell|psexec)\b</field>
+    <description>Windows: Service-related process creation - possible lateral movement</description>
+    <group>lateral_movement,process,</group>
+  </rule>
+  <!-- WMI child process -->
+  <rule id="100012" level="10">
+    <if_sid>61603</if_sid>
+    <field name="win.eventdata.parentImage">WmiPrvSE</field>
+    <match>cmd\.exe|powershell</match>
+    <description>Windows: WmiPrvSE spawning cmd/powershell - possible WMI lateral movement</description>
+    <group>lateral_movement,process,</group>
+  </rule>
+</group>

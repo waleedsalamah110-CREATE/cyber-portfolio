@@ -1,0 +1,22 @@
+|================================================================================|
+| Splunk: Privilege escalation – credential dumping, LSASS, special privileges  |
+|================================================================================|
+
+index=windows EventCode=4688
+| search CommandLine=*mimikatz* OR CommandLine=*sekurlsa* OR CommandLine=*lsadump* OR CommandLine=*procdump*lsass*
+| table _time Computer User NewProcessName CommandLine
+
+|================================================================================|
+| Special privileges assigned (4672) – e.g. SeDebugPrivilege                    |
+|================================================================================|
+
+index=windows EventCode=4672
+| search PrivilegeList=*SeDebugPrivilege* OR PrivilegeList=*SeBackupPrivilege*
+| table _time Computer SubjectUserName PrivilegeList
+
+|================================================================================|
+| Sysmon 10 – Process access (if Sysmon deployed); TargetImage = lsass           |
+|================================================================================|
+
+index=windows EventCode=10 TargetImage=*lsass*
+| table _time Computer SourceImage TargetImage GrantedAccess

@@ -1,0 +1,18 @@
+|================================================================================|
+| Splunk: Brute force detection (Windows 4625 / multiple failed logons)         |
+| Data: Windows Security events (EventCode=4625). Index/source as per your env  |
+|================================================================================|
+
+index=windows EventCode=4625
+| stats dc(TargetUserName) as unique_users count as failed_logons by Computer, IpAddress, _time
+| where failed_logons >= 5
+| table _time Computer IpAddress failed_logons unique_users
+
+|================================================================================|
+| Alternative: Count failures by source IP in 5-minute window                   |
+|================================================================================|
+
+index=windows EventCode=4625
+| bin _time span=5m
+| stats count as failed_logons by IpAddress, _time
+| where failed_logons >= 5

@@ -1,0 +1,26 @@
+<!-- Wazuh custom rules: Brute force (Windows 4625/4624) -->
+<!-- Place in /var/ossec/etc/rules/ and include in ossec.conf <rules><include> -->
+<group name="soc_lab,brute_force,">
+  <!-- Multiple failed logons from same source -->
+  <rule id="100001" level="10">
+    <if_sid>61500</if_sid>
+    <field name="win.eventdata.ipAddress">\.+</field>
+    <field name="win.eventdata.targetUserName">\.+</field>
+    <description>Windows: Failed logon (4625) - possible brute force</description>
+    <group>authentication_failed,pci_dss_10.2.4,</group>
+  </rule>
+  <rule id="100002" level="12">
+    <if_matched_sid>100001</if_matched_sid>
+    <same_source_ip />
+    <frequency>5</frequency>
+    <timeframe>300</timeframe>
+    <description>Windows: Multiple failed logons from same IP (brute force)</description>
+    <group>authentication_failed,brute_force,</group>
+  </rule>
+  <!-- Successful logon after failures (same account) -->
+  <rule id="100003" level="8">
+    <if_sid>61501</if_sid>
+    <description>Windows: Successful logon (4624) - correlate with 4625 for brute success</description>
+    <group>authentication_success,</group>
+  </rule>
+</group>

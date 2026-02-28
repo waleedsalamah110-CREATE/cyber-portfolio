@@ -1,0 +1,25 @@
+<!-- Wazuh custom rules: Privilege escalation (LSASS, Mimikatz, special privs) -->
+<group name="soc_lab,privilege_escalation,">
+  <!-- Credential dumping tools -->
+  <rule id="100020" level="15">
+    <if_sid>61603</if_sid>
+    <match>mimikatz|sekurlsa|lsadump|procdump.*lsass</match>
+    <description>Windows: Possible credential dumping (Mimikatz/lsadump) - privilege escalation</description>
+    <group>privilege_escalation,credential_access,</group>
+  </rule>
+  <!-- Special privileges (SeDebugPrivilege often used before LSASS access) -->
+  <rule id="100021" level="8">
+    <if_sid>61602</if_sid>
+    <match>SeDebugPrivilege|SeBackupPrivilege</match>
+    <description>Windows: Special privileges assigned - possible prep for credential access</description>
+    <group>privilege_escalation,</group>
+  </rule>
+  <!-- Process access to LSASS (Sysmon 10) - if you have Sysmon decoder -->
+  <rule id="100022" level="12">
+    <if_sid>61603</if_sid>
+    <match>lsass\.exe</match>
+    <field name="win.eventdata.image">\.+</field>
+    <description>Windows: Process targeting LSASS - possible credential access</description>
+    <group>privilege_escalation,credential_access,</group>
+  </rule>
+</group>

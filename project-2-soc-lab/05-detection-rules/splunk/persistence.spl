@@ -1,0 +1,28 @@
+|================================================================================|
+| Splunk: Persistence – scheduled tasks, services, Run keys                     |
+|================================================================================|
+
+index=windows EventCode=4698
+| table _time Computer TaskName TaskContent SubjectUserName
+
+|================================================================================|
+| Scheduled task from temp or AppData (high confidence)                          |
+|================================================================================|
+
+index=windows EventCode=4698
+| search TaskContent=*temp* OR TaskContent=*AppData*
+| table _time Computer TaskName TaskContent
+
+|================================================================================|
+| New service installed (7045)                                                   |
+|================================================================================|
+
+index=windows EventCode=7045
+| table _time Computer ServiceName ServiceFileName
+
+|================================================================================|
+| Sysmon 13 – Registry value set (Run/RunOnce) – if Sysmon and EID 13 enabled   |
+|================================================================================|
+
+index=windows EventCode=13 TargetObject=*CurrentVersion\\Run*
+| table _time Computer TargetObject Details
