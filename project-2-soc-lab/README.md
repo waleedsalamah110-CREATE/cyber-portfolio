@@ -1,4 +1,5 @@
-# PROJECT 2 – Full SOC Attack Simulation Lab
+# PROJECT 2 –# 🛡 Cyber Security Portfolio – Waleed Salamah
+ Full SOC Attack Simulation Lab
 
 **Blue Team capability | SOC / DFIR portfolio piece**
 
