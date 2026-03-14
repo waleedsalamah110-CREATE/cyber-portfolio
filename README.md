@@ -15,4 +15,4 @@ A blue-team lab simulating real-world attack chains to practice detection and in
 - SIEM concepts
 - Active Directory
 - Kali Linux
-- 
+  
